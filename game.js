@@ -9,12 +9,14 @@ const tileCount = canvas.width / gridSize;
 
 let snake = [
     {x: 10, y: 10},
+    {x: 9, y: 10},
+    {x: 8, y: 10}
 ];
 let food = {x: 15, y: 15};
-let dx = 0;
+let dx = 1;
 let dy = 0;
 let score = 0;
-let gameSpeed = 150;
+let gameSpeed = 300; // 初始速度更慢
 let gameLoop;
 let difficultyLevel = 1;
 
@@ -97,17 +99,23 @@ function drawSnake() {
         if (index === 0) {
             // 蛇头
             ctx.fillStyle = '#2E7D32';
+            ctx.beginPath();
+            ctx.arc(segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2, gridSize/2, 0, 2*Math.PI);
+            ctx.fill();
+            
+            // 蛇眼
+            ctx.fillStyle = '#FFF';
+            let eyeX = segment.x * gridSize + gridSize/2 + (dx * 5);
+            let eyeY = segment.y * gridSize + gridSize/2 + (dy * 5);
+            ctx.beginPath();
+            ctx.arc(eyeX, eyeY, 3, 0, 2*Math.PI);
+            ctx.fill();
         } else {
             // 蛇身
             ctx.fillStyle = '#4CAF50';
-        }
-        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
-        
-        if (index === 0) {
-            // 蛇眼
-            ctx.fillStyle = '#FFF';
-            ctx.fillRect(segment.x * gridSize + 3, segment.y * gridSize + 3, 4, 4);
-            ctx.fillRect(segment.x * gridSize + 12, segment.y * gridSize + 3, 4, 4);
+            ctx.beginPath();
+            ctx.arc(segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2, gridSize/2 - 1, 0, 2*Math.PI);
+            ctx.fill();
         }
     });
 }
@@ -141,17 +149,22 @@ function checkCollision() {
 }
 
 function gameOver() {
+    clearTimeout(gameLoop);
     alert(`游戏结束! 得分: ${score}`);
     startScreen.style.display = 'block';
 }
 
 function resetGame() {
-    snake = [{x: 10, y: 10}];
+    snake = [
+        {x: 10, y: 10},
+        {x: 9, y: 10},
+        {x: 8, y: 10}
+    ];
     food = {x: 15, y: 15};
-    dx = 0;
+    dx = 1;
     dy = 0;
     score = 0;
-    gameSpeed = 150;
+    gameSpeed = 300;
     difficultyLevel = 1;
     updateScore();
 }
@@ -163,7 +176,7 @@ function updateScore() {
 function increaseSpeed() {
     if (score % 5 === 0) {
         difficultyLevel++;
-        gameSpeed = Math.max(50, gameSpeed - 10);
+        gameSpeed = Math.max(100, gameSpeed - 20);
     }
 }
 
